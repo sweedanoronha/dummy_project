@@ -8,7 +8,7 @@ pool:
 
 steps:
 # Step 1: Check out the code
-- task: UsePythonVersion@1
+- task: UsePythonVersion@0
   inputs:
     versionSpec: '3.x'  # Use the required Python version
     addToPath: true
@@ -16,7 +16,6 @@ steps:
 # Step 2: Install dependencies
 - script: |
     python -m pip install --upgrade pip
-    pip install -r requirements.txt
     pip install pytest pytest-html fastapi uvicorn httpx
   displayName: 'Install dependencies'
 
