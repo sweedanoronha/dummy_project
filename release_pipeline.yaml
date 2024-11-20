@@ -1,0 +1,57 @@
+trigger:
+  branches:
+    include:
+      - main  # Trigger pipeline only for commits to the main branch
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+# Step 1: Check out the code
+- task: UsePythonVersion@1
+  inputs:
+    versionSpec: '3.x'  # Use the required Python version
+    addToPath: true
+
+# Step 2: Install dependencies
+- script: |
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+    pip install pytest pytest-html fastapi uvicorn httpx
+  displayName: 'Install dependencies'
+
+# Step 3: Run pytest
+- script: |
+    pytest --html=report.html --self-contained-html
+  displayName: 'Run pytest'
+
+# Step 4: Publish test results
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/junit*.xml'
+    failTaskOnFailedTests: true
+    testRunTitle: 'Pytest Results'
+
+# Step 5: Fail pipeline on test failure
+- script: |
+    if grep -q "FAILURES" report.html; then
+      echo "Tests failed. Commit will not be pushed to master."
+      exit 1
+    fi
+  displayName: 'Check for test failures'
+
+# Step 6: Send test report
+- task: PublishBuildArtifacts@1
+  inputs:
+    artifactName: 'pytest-report'
+    targetPath: '$(System.DefaultWorkingDirectory)/report.html'
+  displayName: 'Upload pytest report'
+
+#Step 7: Send Email
+- task: SendEmailTask@1
+  inputs:
+    to: 'sweeda@anoralabs.com'
+    subject: 'Pytest Report for Main Branch'
+    body: 'Find the pytest report attached.'
+    attachment: '$(System.DefaultWorkingDirectory)/report.html'
