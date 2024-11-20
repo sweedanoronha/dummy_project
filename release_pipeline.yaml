@@ -47,10 +47,10 @@ steps:
     targetPath: '$(System.DefaultWorkingDirectory)/report.html'
   displayName: 'Upload pytest report'
 
-#Step 7: Send Email
-- task: SendEmailTask@1
-  inputs:
-    to: 'sweeda@anoralabs.com'
-    subject: 'Pytest Report for Main Branch'
-    body: 'Find the pytest report attached.'
-    attachment: '$(System.DefaultWorkingDirectory)/report.html'
+# #Step 7: Send Email
+# - task: SendEmailTask@1
+#   inputs:
+#     to: 'sweeda@anoralabs.com'
+#     subject: 'Pytest Report for Main Branch'
+#     body: 'Find the pytest report attached.'
+#     attachment: '$(System.DefaultWorkingDirectory)/report.html'
