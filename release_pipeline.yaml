@@ -21,25 +21,20 @@ steps:
 
 # Step 3: Run pytest
 - script: |
-    pytest --junitxml=pytest-results.xml
-  displayName: 'Run Tests'
+    mkdir -p $(Build.ArtifactStagingDirectory)  # Ensure directory exists
+    pytest --html=$(Build.ArtifactStagingDirectory)/report.html --self-contained-html
+  displayName: 'Run Tests and Generate Report'
 
 # Step 4: Publish test results
-- task: PublishTestResults@2
+- task: PublishBuildArtifacts@2
   inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '**/pytest-results.xml'  # Path to your test report
-    failTaskOnFailedTests: true
-    testRunTitle: 'Test Results'
-  displayName: 'Publish Test Results'
-
-- script: |
-    ls -R $(System.DefaultWorkingDirectory)
-  displayName: 'List Files for Debugging'
+    artifactName: 'pytest-report'
+    targetPath: '$(Build.ArtifactStagingDirectory)'  # Match report storage location
+  displayName: 'Publish Pytest Report'
 
 # Step 5: Fail pipeline on test failure
 - script: |
-    if grep -q "FAILURES" pytest-results.xml; then
+    if grep -q "FAILURES" report.html; then
       echo "Tests failed. Commit will not be pushed to master."
       exit 1
     fi
@@ -49,8 +44,8 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     artifactName: 'pytest-report'
-    targetPath: '**/pytest-results.xml'
-  displayName: 'Upload pytest report'
+    targetPath: '$(Build.ArtifactStagingDirectory)'  # Match report storage location
+  displayName: 'Publish Pytest Report'
 
 # #Step 7: Send Email
 # - task: SendEmailTask@1
