@@ -25,14 +25,7 @@ steps:
     pytest --html=$(Build.ArtifactStagingDirectory)/report.html --self-contained-html
   displayName: 'Run Tests and Generate Report'
 
-# Step 4: Publish test results
-- task: PublishBuildArtifacts@2
-  inputs:
-    artifactName: 'pytest-report'
-    targetPath: '$(Build.ArtifactStagingDirectory)'  # Match report storage location
-  displayName: 'Publish Pytest Report'
-
-# Step 5: Fail pipeline on test failure
+# Step 4: Fail pipeline on test failure
 - script: |
     if grep -q "FAILURES" report.html; then
       echo "Tests failed. Commit will not be pushed to master."
@@ -40,14 +33,14 @@ steps:
     fi
   displayName: 'Check for test failures'
 
-# Step 6: Send test report
+# Step 5: Send test report
 - task: PublishBuildArtifacts@2
   inputs:
     artifactName: 'pytest-report'
     targetPath: '$(Build.ArtifactStagingDirectory)'  # Match report storage location
   displayName: 'Publish Pytest Report'
 
-# #Step 7: Send Email
+# #Step 6: Send Email
 # - task: SendEmailTask@1
 #   inputs:
 #     to: 'sweeda@anoralabs.com'
