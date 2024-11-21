@@ -49,7 +49,7 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     artifactName: 'pytest-report'
-    targetPath: 'pytest-results.xml'
+    targetPath: '**/pytest-results.xml'
   displayName: 'Upload pytest report'
 
 # #Step 7: Send Email
