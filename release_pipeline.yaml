@@ -33,6 +33,15 @@ steps:
     fi
   displayName: 'Check for test failures'
 
+# Step 4: Publish test results
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/report.html'  # Path to your test report
+    failTaskOnFailedTests: true
+    testRunTitle: 'Test Results'
+  displayName: 'Publish Test Results'
+
 # Step 5: Send test report
 - task: PublishBuildArtifacts@1
   inputs:
