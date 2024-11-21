@@ -37,7 +37,7 @@ steps:
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: '**/report.html'  # Path to your test report
+    testResultsFiles: '$(Build.ArtifactStagingDirectory)/report.html'  # Path to your test report
     failTaskOnFailedTests: true
     testRunTitle: 'Test Results'
   displayName: 'Publish Test Results'
