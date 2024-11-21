@@ -19,25 +19,24 @@ steps:
     pip install pytest pytest-html fastapi uvicorn httpx
   displayName: 'Install dependencies'
 
-# Step 3: Run pytest
 - script: |
     mkdir -p $(Build.ArtifactStagingDirectory)  # Ensure directory exists
-    pytest --html=$(Build.ArtifactStagingDirectory)/report.html --self-contained-html
-  displayName: 'Run Tests and Generate Report'
+    pytest --junitxml=$(Build.ArtifactStagingDirectory)/test-results.xml --html=$(Build.ArtifactStagingDirectory)/report.html --self-contained-html
+  displayName: 'Run Tests and Generate Reports'
 
 # Step 4: Fail pipeline on test failure
 - script: |
-    if grep -q "FAILURES" report.html; then
+    if grep -q "FAILURES" $(Build.ArtifactStagingDirectory)/report.html; then
       echo "Tests failed. Commit will not be pushed to master."
       exit 1
     fi
   displayName: 'Check for test failures'
 
-# Step 4: Publish test results
+# Step 5: Publish JUnit test results
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: '$(Build.ArtifactStagingDirectory)/report.html'  # Path to your test report
+    testResultsFiles: '$(Build.ArtifactStagingDirectory)/test-results.xml'
     failTaskOnFailedTests: true
     testRunTitle: 'Test Results'
   displayName: 'Publish Test Results'
