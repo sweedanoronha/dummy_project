@@ -34,7 +34,7 @@ steps:
   displayName: 'Check for test failures'
 
 # Step 5: Send test report
-- task: PublishBuildArtifacts@2
+- task: PublishBuildArtifacts@1
   inputs:
     artifactName: 'pytest-report'
     targetPath: '$(Build.ArtifactStagingDirectory)'  # Match report storage location
