@@ -21,16 +21,21 @@ steps:
 
 # Step 3: Run pytest
 - script: |
-    pytest --html=report.html --self-contained-html
-  displayName: 'Run pytest'
+    pytest --junitxml=pytest-results.xml
+  displayName: 'Run Tests'
 
 # Step 4: Publish test results
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: '**/junit*.xml'
+    testResultsFiles: '**/pytest-results.xml'  # Path to your test report
     failTaskOnFailedTests: true
-    testRunTitle: 'Pytest Results'
+    testRunTitle: 'Test Results'
+  displayName: 'Publish Test Results'
+
+- script: |
+    ls -R $(System.DefaultWorkingDirectory)
+  displayName: 'List Files for Debugging'
 
 # Step 5: Fail pipeline on test failure
 - script: |
